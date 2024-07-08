@@ -1,1 +1,61 @@
 https://learn.microsoft.com/en-us/azure/data-factory/create-self-hosted-integration-runtime
+
+
+
+
+
+
+
+1. Configure Self-hosted Integration Runtime (SHIR)
+Install and Configure SHIR:
+
+Download the SHIR installer from the Azure portal.
+Install it on your local server following the installation wizard.
+Register the SHIR in Azure Data Factory by using the key provided in the ADF portal.
+Create a Linked Service for SHIR:
+
+In the ADF portal, go to Manage -> Linked services.
+Click New, select your data store (e.g., SQL Server), and configure it to use the SHIR.
+2. Configure FTP/SFTP Server and Create ADF Pipeline for Data Extraction
+Set Up FTP/SFTP Linked Service:
+
+Go to Manage -> Linked services.
+Click New, select FTP or SFTP, and enter the connection details (server, port, user, password, etc.).
+Create a Pipeline to Extract Data from FTP/SFTP:
+
+Go to Author -> Pipelines -> New pipeline.
+Add a Copy Data activity to the pipeline.
+Configure the Source to use the FTP/SFTP linked service.
+Configure the Sink to use your target Azure database linked service.
+3. Create Incremental Load Pipeline and Automate on a Daily Basis
+Create Incremental Load Pipeline:
+
+Go to Author -> Pipelines -> New pipeline.
+Add activities to handle incremental data loading (e.g., a Lookup activity to get the last loaded timestamp, followed by a Copy Data activity).
+Use parameters to dynamically set the time range for the incremental load.
+Set Up Daily Trigger:
+
+Go to Manage -> Triggers.
+Create a new trigger and set it to Scheduled.
+Configure the trigger to run daily at your desired time.
+Attach the trigger to your incremental load pipeline.
+4. Automate Pipeline to Trigger Every Last Saturday of the Month
+Create Pipeline for Monthly Task:
+
+Go to Author -> Pipelines -> New pipeline.
+Add the activities required for your monthly task.
+Set Up Monthly Trigger:
+
+Go to Manage -> Triggers.
+Create a new trigger and set it to Scheduled.
+Use a cron expression to schedule the trigger for the last Saturday of each month (e.g., 0 0 0 ? * 7L).
+Attach the trigger to your monthly pipeline.
+5. Retrieving Data and Handling Errors
+If you encounter an error like "Retrieving data. Wait a few seconds and try to cut or copy again," it may be related to network latency or a temporary issue with the data store. Ensure your connection strings and credentials are correct, and that there are no network issues between ADF and your data stores.
+
+Summary of Steps:
+Install and configure Self-hosted Integration Runtime.
+Set up FTP/SFTP linked services.
+Create pipelines for data extraction.
+Set up incremental load and daily triggers.
+Set up monthly triggers for specific tasks.
