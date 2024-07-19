@@ -1,0 +1,57 @@
+import os
+import pandas as pd
+from sqlalchemy import create_engine
+import re
+
+
+db_username = 'your_username'
+db_password = 'your_password'
+db_host = 'your_host'
+db_port = 'your_port'
+db_name = 'your_database'
+
+
+engine = create_engine(f'postgresql://{db_username}:{db_password}@{db_host}:{db_port}/{db_name}')
+
+def extract_date(filename):
+    date_match = re.search(r'\d{8}', filename)
+    if date_match:
+        date_str = date_match.group(0)
+        date = pd.to_datetime(date_str, format='%Y%m%d').date()
+        return date, date_str
+    return None, None
+
+
+def process_cust_mstr(file_path):
+    date, _ = extract_date(os.path.basename(file_path))
+    df = pd.read_csv(file_path)
+    df['Date'] = date
+    df.to_sql('CUST_MSTR', engine, if_exists='replace', index=False)
+
+
+def process_master_child_export(file_path):
+    date, date_key = extract_date(os.path.basename(file_path))
+    df = pd.read_csv(file_path)
+    df['Date'] = date
+    df['DateKey'] = date_key
+    df.to_sql('master_child', engine, if_exists='replace', index=False)
+
+
+def process_h_ecom_order(file_path):
+    df = pd.read_csv(file_path)
+    df.to_sql('H_ECOM_Orders', engine, if_exists='replace', index=False)
+
+def main(data_lake_path):
+    for root, _, files in os.walk(data_lake_path):
+        for file in files:
+            file_path = os.path.join(root, file)
+            if file.startswith('CUST_MSTR'):
+                process_cust_mstr(file_path)
+            elif file.startswith('master_child_export'):
+                process_master_child_export(file_path)
+            elif file.startswith('H_ECOM_ORDER'):
+                process_h_ecom_order(file_path)
+
+
+data_lake_path = '/path/to/data_lake'
+main(data_lake_path)

@@ -1,0 +1,52 @@
+Azure Bill of Materials (BoM) for Data Ingestion
+Data Sources:
+
+Oracle (on-premise) - Monthly Incremental: 30 GB, 20 Tables
+Salesforce - Monthly Incremental: 50 GB, 120 Tables
+Semi-structured files on FTP - Monthly: 5 GB, 20 Files
+Azure Services:
+
+Data Ingestion:
+Oracle to Azure:
+Azure Data Factory (ADF): Orchestrates and manages the data movement process. Free tier available for basic activities, pay-as-you-go for additional data movement units (DMUs).
+Azure Database Migration Service (DMS): Facilitates schema and data migration from Oracle to Azure Database for PostgreSQL/SQL Server (if needed). Pay-as-you-go for vCores used during migration.
+
+
+
+Salesforce to Azure:
+ADF: Orchestrates data movement. Free tier available, pay-as-you-go for additional DMUs.
+Salesforce Bulk API or Heroku Connect: Provides bulk data extraction capabilities from Salesforce. Free tier for Salesforce Bulk API, pricing for Heroku Connect varies based on usage.
+
+
+
+FTP to Azure:
+ADF: Orchestrates data transfer. Free tier available, pay-as-you-go for additional DMUs.
+Azure Data Lake Storage (ADLS): Stores the semi-structured files. Pay-as-you-go for storage used.
+
+
+Data Storage:
+
+
+Azure Data Warehouse (ADW) or Azure Synapse Analytics: Stores the transformed and integrated data for analysis. Pay-as-you-go for data storage and compute used.
+Cost Estimation:
+
+Data Ingestion:
+
+
+ADF: Free tier for basic activities might be sufficient for orchestration. However, additional DMUs might be needed for data movement. Cost depends on the amount of data transferred monthly. Estimate based on https://azure.microsoft.com/en-us/pricing/details/data-factory/data-pipeline/
+DMS (if used): Cost depends on vCores used during the migration. Estimate based on https://azure.microsoft.com/en-us/pricing/details/database-migration/
+Salesforce Bulk API: Free tier might be sufficient. Additional costs for Heroku Connect if used.
+Data Storage:
+ADLS: Pay-as-you-go for storage used. Estimate based on https://azure.microsoft.com/en-us/pricing/details/storage/data-lake/
+ADW/Synapse Analytics: Pay-as-you-go for data storage and compute used. Estimate based on https://azure.microsoft.com/en-us/pricing/details/synapse-analytics/ or https://azure.microsoft.com/en-us/pricing/details/synapse-analytics/
+Note: This is a high-level BoM with estimated costs based on pricing structures as of July 19, 2024. Actual costs may vary depending on specific usage patterns and chosen configurations.
+
+Detailed Description:
+
+Data Extraction:
+Oracle data can be extracted using ADF with a combination of Oracle connectors and copy activities. DMS can be used for schema and data migration if needed.
+Salesforce data can be extracted using the Salesforce Bulk API or Heroku Connect, orchestrated by ADF.
+Semi-structured files can be transferred from FTP to ADLS using ADF with a dedicated FTP connector.
+Data Transformation:
+Data extracted from all sources can be landed in ADLS in its raw format. ADF can be used for further data transformation tasks like schema alignment, cleansing, and integration before loading into the data warehouse.
+
